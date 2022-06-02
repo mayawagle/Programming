@@ -10,7 +10,7 @@ class Pan(games.Sprite):
     #a pan controlled by the player to catch falling pizzas
     image = games.load_image('pan.bmp')
 
-    def __init_(self):
+    def __init__(self):
         #initialize pan object and create text object for score
         super(Pan,self).__init__(image = Pan.image, x = games.mouse.x, bottom = games.screen.height )
 
