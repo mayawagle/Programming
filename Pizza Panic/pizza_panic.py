@@ -62,3 +62,52 @@ class Pizza(games.Sprite):
         end_message = games.Message(value = 'Game Over', size = 90, color=color.red, x = games.screen.width/2, y = games.screen.height/2,lifetime = 5 * games.screen.fps, after_death = games.screen.quit )
         games.screen.add(end_message)
 
+class Chef(games.Sprite):
+    #a chef which moves left and right, dropping pizzas
+    image = games.load_image('chef.bmp')
+
+    def __init__(self, y = 55, speed = 2, odds_change = 200):
+        #initialize the chef object
+        super(Chef,self).__init__(image = Chef.image, x = games.screen.width / 2, y = y, dx = speed)
+        self.odds_change = odds_change
+        self.time_til_drop = 0
+    
+    def update(self):
+        #determine if the direction needs to be reversed
+        if self.left < 0 or self.right > games.screen.width:
+            self.dx = -self.dx
+        elif random.randrange(self.odds_change) == 0:
+            self.dx = -self.dx
+        
+        self.check_drop()
+
+    def check_drop(self):
+        #decrease countdown or drop pizza and reset countdown
+        if self.time_til_drop > 0:
+            self.time_til_drop -= 1
+        else:
+            new_pizza = Pizza(x = self.x)
+            games.screen.add(new_pizza)
+
+            #set buffer to approx 30% of pizza height, regardless of pizza speed
+            self.time_til_drop = int(new_pizza.height * 1.3 / Pizza.speed) +1
+
+def main():
+    #play the game
+    wall_image = games.load_image("wall.jpg", transparent = False)
+    games.screen.background = wall_image
+
+    the_chef = Chef()
+    games.screen.add(the_chef)
+
+    the_pan = Pan()
+    games.screen.add(the_pan)
+
+    games.mouse.is_visible = False
+
+    games.screen.event_grab = True
+
+    games.screen.mainloop()
+
+#START THE GAME YAYAYAYAYAYAY
+main()
