@@ -94,7 +94,7 @@ class Chef(games.Sprite):
             #set buffer to approx 30% of pizza height, regardless of pizza speed
             #self.time_til_drop = int(new_pizza.height * 1.3 / Pizza.speed) +1
             self.time_til_drop = 100
-            self.index += .1
+            self.index += .01
 def main():
     #play the game
     wall_image = games.load_image("wall.jpg", transparent = False)
