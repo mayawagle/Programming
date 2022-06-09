@@ -1,7 +1,7 @@
-#Astrocrash01
+#Astrocrash
 #get asteroids moving on the screen
 
-import random
+import math,random
 from turtle import update
 from superwires import games
 games.init(screen_width = 640, screen_height = 480, fps = 50)
@@ -39,6 +39,8 @@ class Ship(games.Sprite):
     #The player's ship
     image = games.load_image("ship.bmp")
     ROTATION_STEP = 3
+    VELOCITY_STEP = 0.03
+    sound = games.load_sound("thrust.wav")
 
     def update(self):
         #rotate based on keys pressed
@@ -46,6 +48,28 @@ class Ship(games.Sprite):
          self.angle -= Ship.ROTATION_STEP
         if games.keyboard.is_pressed(games.K_RIGHT):
          self.angle += Ship.ROTATION_STEP
+
+        #apple thrust based on up arrow key
+        if games.keyboard.is_pressed(games.K_UP):
+            Ship.sound.play()
+            #change velocity components based on ship's angle
+            angle = self.angle * math.pi / 180 #convert to radians
+            self.dx += Ship.VELOCITY_STEP * math.sin(angle)
+            self.dy += Ship.VELOCITY_STEP * -math.cos(angle)
+
+        #wrap the ship around the screen
+        if self.top > games.screen.height:
+            self.bottom = 0
+
+        if self.bottom < 0:
+            self.top = games.screen.height
+
+        if self.left > games.screen.width:
+            self.right = 0
+            
+        if self.right < 0:
+            self.left = games.screen.width
+
 
 
 def main():
