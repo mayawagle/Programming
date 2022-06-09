@@ -42,7 +42,14 @@ class Ship(games.Sprite):
     image = games.load_image("ship.bmp")
     ROTATION_STEP = 3
     VELOCITY_STEP = 0.03
+    MISSILE_DELAY = 25
     sound = games.load_sound("thrust.wav")
+
+    def __init__(self, x, y):
+        #initialize ship sprite
+        super(Ship, self).__init__(image = Ship.image, x = x, y =y )
+        self.missile_wait = 0
+
 
     def update(self):
         #rotate based on keys pressed
@@ -59,10 +66,16 @@ class Ship(games.Sprite):
             self.dx += Ship.VELOCITY_STEP * math.sin(angle)
             self.dy += Ship.VELOCITY_STEP * -math.cos(angle)
 
-        #fire missile if spacebar pressed
-        if games.keyboard.is_pressed(games.K_SPACE):
+        #if waiting until the ship can fire next, decrease wait
+        if self.missile_wait > 0:
+            self.missile_wait -= 1
+
+        #fire missile if spacebar pressed and missile wait is over
+        if games.keyboard.is_pressed(games.K_SPACE) and self.missile_wait == 0:
             new_missile = Missile(self.x, self.y, self.angle)
             games.screen.add(new_missile)
+            self.missile_wait = Ship.MISSILE_DELAY
+        
 
         #wrap the ship around the screen
         if self.top > games.screen.height:
@@ -144,7 +157,7 @@ def main():
         games.screen.add(new_asteroid)
     
     #create the ship
-    the_ship = Ship(image = Ship.image, x = games.screen.width/2, y = games.screen.height/2)
+    the_ship = Ship( x = games.screen.width/2, y = games.screen.height/2)
     games.screen.add(the_ship)
 
     games.screen.mainloop()
