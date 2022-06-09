@@ -12,6 +12,7 @@ class Asteroid(games.Sprite):
     MEDIUM = 2
     LARGE = 3
     SPEED = 2
+    SPAWN = 2
     images = {SMALL : games.load_image("asteroid_small.bmp"), MEDIUM : games.load_image("asteroid_med.bmp"), LARGE : games.load_image("asteroid_big.bmp") }
 
     def __init__(self, x, y, size):
@@ -36,6 +37,14 @@ class Asteroid(games.Sprite):
         
         if self.right < 0:
             self.left = games.screen.width
+    
+    def die(self):
+        #destroy asteroid
+        #if asteroid isnt small, replace with two smaller asteroids
+        if self.size != Asteroid.SMALL:
+            for i in range(Asteroid.SPAWN):
+                new_asteroid = Asteroid(x = self.x, y = self.y, size = self.size - 1)
+                games.screen.add(new_asteroid)
 
 class Ship(games.Sprite):
     #The player's ship
@@ -76,7 +85,6 @@ class Ship(games.Sprite):
             games.screen.add(new_missile)
             self.missile_wait = Ship.MISSILE_DELAY
         
-
         #wrap the ship around the screen
         if self.top > games.screen.height:
             self.bottom = 0
@@ -89,6 +97,16 @@ class Ship(games.Sprite):
 
         if self.right < 0:
             self.left = games.screen.width
+        
+        #check if ship overlaps any other object
+        if self.overlapping_sprites:
+            for sprite in self.overlapping_sprites:
+                sprite.die()
+            self.die()
+    
+    def die(self):
+        #destroy ship
+        self.destroy()
     
 class Missile(games.Sprite):
      #a missile launched by the player's ship
@@ -128,6 +146,12 @@ class Missile(games.Sprite):
         if self.lifetime == 0:
             self.destroy()
         
+        #check if missile overlaps any other object
+        if self.overlapping_sprites:
+            for sprite in self.overlapping_sprites:
+                sprite.die()
+            self.die
+
         #wrap the missile around screen
         if self.top > games.screen.height:
             self.bottom = 0
@@ -140,6 +164,10 @@ class Missile(games.Sprite):
 
         if self.right < 0:
             self.left = games.screen.width
+    
+    def die(self):
+        #destroy the missile
+        self.destroy()
 
 
 
