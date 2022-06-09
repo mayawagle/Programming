@@ -2,6 +2,7 @@
 #get asteroids moving on the screen
 
 import random
+from turtle import update
 from superwires import games
 games.init(screen_width = 640, screen_height = 480, fps = 50)
 
@@ -34,6 +35,19 @@ class Asteroid(games.Sprite):
         if self.right < 0:
             self.left = games.screen.width
 
+class Ship(games.Sprite):
+    #The player's ship
+    image = games.load_image("ship.bmp")
+    ROTATION_STEP = 3
+
+    def update(self):
+        #rotate based on keys pressed
+        if games.keyboard.is_pressed(games.K_LEFT):
+         self.angle -= Ship.ROTATION_STEP
+        if games.keyboard.is_pressed(games.K_RIGHT):
+         self.angle += Ship.ROTATION_STEP
+
+
 def main():
     #establish background
     nebula_image = games.load_image("nebula.jpg")
@@ -46,7 +60,13 @@ def main():
         size = random.choice([Asteroid.SMALL, Asteroid.MEDIUM, Asteroid.LARGE])
         new_asteroid = Asteroid(x = x, y = y, size = size)
         games.screen.add(new_asteroid)
+    
+    #create the ship
+    the_ship = Ship(image = Ship.image, x = games.screen.width/2, y = games.screen.height/2)
+    games.screen.add(the_ship)
 
     games.screen.mainloop()
 
+
+#start the game
 main()
